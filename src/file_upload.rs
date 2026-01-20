@@ -26,7 +26,7 @@ fn ask_for_file_path() -> PathBuf {
         let temp_path = Path::new(trimmed_input);
 
         match File::open(temp_path) {
-            Ok(file) => {
+            Ok(_file) => {
                 file_path = temp_path.to_path_buf();
                 is_file_valid = true;
             }
