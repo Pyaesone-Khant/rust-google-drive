@@ -1,7 +1,4 @@
-use std::io::Read;
-
 use colored::Colorize;
-use image::math;
 
 #[derive(Debug)]
 pub enum SERVICES {
