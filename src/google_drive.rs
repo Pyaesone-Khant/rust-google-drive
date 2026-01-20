@@ -8,7 +8,8 @@ use google_drive3::{
 };
 use hyper_rustls::HttpsConnector;
 use rustls::crypto::aws_lc_rs;
-use std::path::Path;
+
+const OAUTH_CREDENTIALS: &str = include_str!("../oauth-client-secret.json");
 
 pub async fn init_google_drive() -> DriveHub<HttpsConnector<HttpConnector>> {
     // creating crypto provider
@@ -17,9 +18,8 @@ pub async fn init_google_drive() -> DriveHub<HttpsConnector<HttpConnector>> {
         .expect("Failed to install default provider");
 
     // get application secret
-    let secret_path = Path::new("oauth-client-secret.json");
-    let secret = yup_oauth2::read_application_secret(secret_path)
-        .await
+    // let secret_path = Path::new("oauth-client-secret.json");
+    let secret = yup_oauth2::parse_application_secret(OAUTH_CREDENTIALS)
         .expect("oauth-client-secret.json not found!");
 
     let connector = hyper_rustls::HttpsConnectorBuilder::new()
