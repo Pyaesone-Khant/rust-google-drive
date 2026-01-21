@@ -1,6 +1,4 @@
-use colored::Colorize;
-
-use crate::services::SERVICES;
+use crate::services::Service;
 
 mod explore_files;
 mod file_upload;
@@ -13,7 +11,7 @@ async fn main() {
     let hub = google_drive::init_google_drive().await;
 
     match service {
-        SERVICES::DisplayFiles => explore_files::explore(&hub).await,
-        SERVICES::UploadFile => file_upload::upload_file(&hub).await,
+        Service::DisplayFiles => explore_files::explore(&hub).await,
+        Service::UploadFile => file_upload::upload_file(&hub).await,
     }
 }

@@ -5,16 +5,16 @@ use google_drive3::{DriveHub, hyper_util::client::legacy::connect::HttpConnector
 use hyper_rustls::HttpsConnector;
 
 #[derive(Debug)]
-pub enum FILE_TYPE {
+pub enum FileType {
     Image,
     Video,
     Pdf,
 }
 
-fn ask_file_type() -> FILE_TYPE {
+fn ask_file_type() -> FileType {
     let mut input = String::new();
 
-    let mut file_type: Option<FILE_TYPE> = None;
+    let mut file_type: Option<FileType> = None;
 
     while file_type.is_none() {
         input.clear();
@@ -42,9 +42,9 @@ fn ask_file_type() -> FILE_TYPE {
 
         match input.trim().parse::<i32>() {
             Ok(num) => match num {
-                1 => file_type = Some(FILE_TYPE::Image),
-                2 => file_type = Some(FILE_TYPE::Video),
-                3 => file_type = Some(FILE_TYPE::Pdf),
+                1 => file_type = Some(FileType::Image),
+                2 => file_type = Some(FileType::Video),
+                3 => file_type = Some(FileType::Pdf),
                 4 => process::exit(0),
                 _ => println!("❌. Service not available! Please select the available service. 😭"),
             },
@@ -61,9 +61,9 @@ pub async fn explore(hub: &DriveHub<HttpsConnector<HttpConnector>>) {
     let file_type = ask_file_type();
 
     let mime_query = match file_type {
-        FILE_TYPE::Image => "mimeType contains 'image/'",
-        FILE_TYPE::Video => "mimeType contains 'video/'",
-        FILE_TYPE::Pdf => "mimeType = 'application/pdf'",
+        FileType::Image => "mimeType contains 'image/'",
+        FileType::Video => "mimeType contains 'video/'",
+        FileType::Pdf => "mimeType = 'application/pdf'",
         // _ => "trashed = false",
     };
 
@@ -80,7 +80,7 @@ pub async fn explore(hub: &DriveHub<HttpsConnector<HttpConnector>>) {
         .list()
         .q(&final_query)
         .page_size(5)
-        .param("fields", "files(id, name, mimeType, webContentLink)")
+        .param("fields", "files(id, name, mimeType, webViewLink)")
         .add_scope("https://www.googleapis.com/auth/drive.readonly")
         .doit()
         .await;
@@ -93,9 +93,11 @@ pub async fn explore(hub: &DriveHub<HttpsConnector<HttpConnector>>) {
                     println!(
                         "{}",
                         format!(
-                            "{} - url:{:?} - name:{} - id:({})",
+                            "{} - url:{} - name:{} - id:({})",
                             index + 1,
-                            file.web_content_link,
+                            file.web_view_link
+                                .as_deref()
+                                .unwrap_or("No Web View Link available"),
                             file.name.as_deref().unwrap_or_default(),
                             file.id.as_deref().unwrap_or_default()
                         )

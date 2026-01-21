@@ -1,14 +1,14 @@
 use colored::Colorize;
 
 #[derive(Debug)]
-pub enum SERVICES {
+pub enum Service {
     DisplayFiles,
     UploadFile,
 }
 
-pub fn ask_user_for_service() -> SERVICES {
+pub fn ask_user_for_service() -> Service {
     let mut input = String::new();
-    let mut service: Option<SERVICES> = None;
+    let mut service: Option<Service> = None;
 
     while service.is_none() {
         input.clear();
@@ -40,10 +40,10 @@ pub fn ask_user_for_service() -> SERVICES {
         match input.trim().parse::<i32>() {
             Ok(num) => match num {
                 1 => {
-                    service = Some(SERVICES::DisplayFiles);
+                    service = Some(Service::DisplayFiles);
                 }
                 2 => {
-                    service = Some(SERVICES::UploadFile);
+                    service = Some(Service::UploadFile);
                 }
                 3 => std::process::exit(0),
                 _ => println!("❌. Service not available! Please select the available service. 😭"),
